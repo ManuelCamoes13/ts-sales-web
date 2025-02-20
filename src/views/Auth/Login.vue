@@ -65,7 +65,7 @@ export default {
           console.log(result.data.token);
           localStorage.setItem("token", JSON.stringify(result.data.token));
           localStorage.setItem("user", JSON.stringify(result.data.user));
-          this.$router.push({ name: "Produto-list" });
+          this.$router.push({ name: "Cliente" });
         })
         .catch((error) => {
           this.error = error.response.data;

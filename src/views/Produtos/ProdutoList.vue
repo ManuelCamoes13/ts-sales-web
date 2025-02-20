@@ -21,6 +21,7 @@
               label-for="search-select"
               :label-cols="4"
             >
+            
               <v-select
                 id="search-select"
                 v-model="selectedCategoria"
@@ -37,7 +38,7 @@
             <tr>
               <th>Nome do produto</th>
               <th>Categoria</th>
-              <th>Preco</th>
+              <th>Preço</th>
               <th>Quantidade</th>
               <th>Aviso Qtd. minima</th>
               <th>Estado</th>
@@ -57,7 +58,7 @@
                 <b-button size="xs" variant="primary" v-b-modal.ver>
                 <i class="fa fa-eye mr-0 mb-xs" />
                 Ver</b-button>
-                  <b-button size="xs" variant="success" >
+                  <b-button size="xs" variant="success" @click="openEdit(produto)">
                   <i class="fa fa-edit mr-0 mb-xs" />
                   Editar</b-button>
                   <b-button size="xs" variant="danger">
@@ -72,29 +73,32 @@
 
 <b-modal
         id="edit"
-        title="Detalhes do produto"
+        title="Actualizar do produto"
         body-class="bg-white"
         cancel-variant="default"
+        hide-footer
       >
             <b-form >
             <b-row>
-              <b-col lg="6">
+              <b-col lg="12">
                 <b-form-group
                   horizontal
                   label="Seleccione a categoria"
                   label-for="search-select"
                 >
-                  <!-- <v-select
-                    id="search-select"
-                    v-model="selectedCategoria"
-                    :options="categorias"
-                    label="nome"
-                    :reduce="(categoria) => categoria.id"
-                  /> -->
                 </b-form-group>
+
+                 <v-select
+                id="search-select"
+                v-model="categoria_id"
+                :options="categorias"
+                label="nome"
+                :reduce="(categoria) => categoria.id"
+              />
+
               </b-col>
 
-              <b-col lg="6">
+              <b-col lg="12">
                 <b-form-group label="Nome " label-breakpoint="md" label-for="basic">
                   <input
                     v-validate="'required'"
@@ -129,10 +133,10 @@
             </b-form-group>
 
             <b-row>
-              <b-col lg="6">
+              <b-col lg="12">
                 <b-form-group
                   horizontal
-                  label="Preco"
+                  label="Preço"
                   label-breakpoint="md"
                   label-for="number"
                 >
@@ -149,7 +153,7 @@
                   </span>
                 </b-form-group>
               </b-col>
-              <b-col lg="6">
+              <b-col lg="12">
                 <b-form-group
                   horizontal
                   label="Quantidade de stock"
@@ -172,7 +176,7 @@
             </b-row>
 
             <b-row>
-              <b-col lg="6">
+              <b-col lg="12">
                 <b-form-group
                   horizontal
                   label="Alerta de stock baixo"
@@ -185,7 +189,7 @@
                     :class="{ 'form-control': true, 'is-invalid': errors.has('number') }"
                     type="number"
                     id="number"
-                    v-model="quantidade_de_stock_baixo"
+                    v-model="quantidadeMinima"
                   />
                   <span class="text-danger" v-if="errors.has('number')">
                     {{ errors.first("number") }}
@@ -229,7 +233,26 @@
         body-class="bg-white"
         cancel-variant="default"
       >
-        
+      <b-row>
+        <b-col lg="6">  <strong>Nome: </strong> </b-col>
+         <b-col lg="6"> {{produtos[0].nome}} </b-col>
+
+          <b-col lg="6">  <strong>Discrição: </strong> </b-col>
+         <b-col lg="6"> {{produtos[0].descricao}}  </b-col>
+
+          <b-col lg="6">  <strong>Preço: </strong> </b-col>
+         <b-col lg="6"> {{produtos[0].preco}}.MT </b-col>
+
+         <b-col lg="6">  <strong>Quantidade em stock: </strong> </b-col>
+         <b-col lg="6"> {{produtos[0].quantidade}} {{produtos[0].categoria.unidade}}  </b-col>
+
+         <b-col lg="6">  <strong>Quantidade minima: </strong> </b-col>
+         <b-col lg="6"> {{produtos[0].quantidadeMinima}} {{produtos[0].categoria.unidade}}  </b-col>
+
+          <b-col lg="6">  <strong>Categoria: </strong> </b-col>
+         <b-col lg="6">  {{produtos[0].categoria.nome}} </b-col>
+      </b-row>
+    
       </b-modal>
     </b-col>
   </b-row>
@@ -245,7 +268,9 @@ export default {
     return {
       nome: "",
       produtos: [],
+      categoria_id:"",
       categorias:[],
+      selectedProduto:[],
     };
   },
 
@@ -254,6 +279,18 @@ export default {
     this.getCategorias();
   },
   methods: {
+      openEdit(produto) {
+      this.selectedProduto = produto; // Salva o gestor selecionado
+      this.nome = produto.nome;
+      this.descricao = produto.descricao;
+      this.preco = produto.preco;
+      this.quantidade = produto.quantidade;
+      this.quantidadeMinima = produto.quantidadeMinima;
+      this.categoria_id= produto.categoria.nome
+
+      this.$bvModal.show("edit");
+    },
+
     getData() {
       let token = localStorage.getItem("token");
       let config = {

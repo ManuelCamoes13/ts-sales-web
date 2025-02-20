@@ -124,7 +124,7 @@ Vue.use(Router);
 
 export default new Router({
   routes: [
-    { path: '/', redirect: '/app/main/analytics' },
+    { path: '/', redirect: '/login' },
     { path: '/documentation', redirect: '/documentation/getting-started/overview' },
 
     {

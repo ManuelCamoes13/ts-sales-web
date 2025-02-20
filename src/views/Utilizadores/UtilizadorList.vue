@@ -1,6 +1,6 @@
 <template>
   <b-row>
-  <h1 class="page-title">Lista de <span class="fw-semi-bold">Utilizadores</span></h1>
+    <h1 class="page-title">Lista de <span class="fw-semi-bold">Utilizadores</span></h1>
     <b-col lg="12">
       <Widget customHeader>
         <!-- <b-button class="mr-sm" variant="primary" v-b-modal.demo>Demo</b-button> -->
@@ -12,7 +12,6 @@
             </span>
           </b-button>
         </b-button-toolbar>
-        {{clientes}}
         <table class="table table-striped">
           <thead>
             <tr>
@@ -25,7 +24,13 @@
             <tr v-for="(utilizador, index) in utilizadores" :key="index">
               <td>{{ utilizador.name }}</td>
               <td>{{ utilizador.email }}</td>
-              <td><b-badge variant="success">{{ utilizador.type }}</b-badge></td>
+              <td>
+                <b-badge
+                  :variant="utilizador.type === 'operador' ? 'primary' : 'success'"
+                >
+                  {{ utilizador.type }}
+                </b-badge>
+              </td>
               <td>
                 <b-button-group class="mb-3">
                   <b-button size="xs" variant="success" v-b-modal.edit>
@@ -86,9 +91,7 @@
               {{ errors.first("nome") }}
             </span>
           </b-form-group>
-        
-        
-         
+
           <b-form-group label="Email " label-breakpoint="md" label-for="basic">
             <input
               v-validate="'required'"
@@ -102,7 +105,7 @@
               {{ errors.first("email") }}
             </span>
           </b-form-group>
- <b-form-group label="Senha " label-breakpoint="md" label-for="basic">
+          <b-form-group label="Senha " label-breakpoint="md" label-for="basic">
             <input
               v-validate="'required'"
               name="senha"
@@ -130,7 +133,7 @@
           </div>
         </b-form>
       </b-modal>
-     <b-modal
+      <b-modal
         id="edit"
         title="Actualizar cliente"
         body-class="bg-white"
@@ -140,7 +143,7 @@
         <b-form @submit.prevent="handleSubmit">
           <b-form-group
             <b-form-group
-            label="Nome do cliente"
+            label="TIpo de utilizador"
             label-breakpoint="md"
             label-for="basic"
           >
@@ -149,7 +152,7 @@
               name="tipo"
               id="tipo"
               v-model="tipo"
-              :options="['Individual', 'Empresa']"
+              :options="['admin', 'operador']"
             />
             <span class="text-danger" v-if="errors.has('tipo')">
               {{ errors.first("tipo") }}
@@ -157,7 +160,7 @@
           </b-form-group>
           <b-form-group
             <b-form-group
-            label="Nome do cliente"
+            label="Nome do utilizador"
             label-breakpoint="md"
             label-for="basic"
           >
@@ -173,43 +176,7 @@
               {{ errors.first("nome") }}
             </span>
           </b-form-group>
-          <b-form-group
-            <b-form-group
-            label="NUIT"
-            label-breakpoint="md"
-            label-for="basic"
-          >
-            <input
-              v-validate="'required'"
-              name="nuit"
-              :class="{ 'form-control': true, 'is-invalid': errors.has('nuit') }"
-              type="number"
-              id="nuit"
-              v-model="nuit"
-            />
-            <span class="text-danger" v-if="errors.has('nuit')">
-              {{ errors.first("nuit") }}
-            </span>
-          </b-form-group>
-          <b-form-group
-            <b-form-group
-            label="Telefone"
-            label-breakpoint="md"
-            label-for="basic"
-          >
-            <input
-              v-validate="'required'"
-              name="contacto"
-              :class="{ 'form-control': true, 'is-invalid': errors.has('contacto') }"
-              type="number"
-              id="contacto"
-              v-model="contacto"
-            />
-            <span class="text-danger" v-if="errors.has('contacto')">
-              {{ errors.first("contacto") }}
-            </span>
-          </b-form-group>
-         
+
           <b-form-group label="Email " label-breakpoint="md" label-for="basic">
             <input
               v-validate="'required'"
@@ -223,17 +190,17 @@
               {{ errors.first("email") }}
             </span>
           </b-form-group>
- <b-form-group label="Endereco " label-breakpoint="md" label-for="basic">
+          <b-form-group label="Senha " label-breakpoint="md" label-for="basic">
             <input
               v-validate="'required'"
-              name="endereco"
-              :class="{ 'form-control': true, 'is-invalid': errors.has('endereco') }"
+              name="senha"
+              :class="{ 'form-control': true, 'is-invalid': errors.has('senha') }"
               type="text"
               id="basic"
-              v-model="endereco"
+              v-model="password"
             />
-            <span class="text-danger" v-if="errors.has('endereco')">
-              {{ errors.first("endereco") }}
+            <span class="text-danger" v-if="errors.has('senha')">
+              {{ errors.first("senha") }}
             </span>
           </b-form-group>
           <div class="form-action bg-transparent px-0">
@@ -264,10 +231,10 @@ export default {
     return {
       nome: "",
       tipo: "",
-      contacto:"",
-      email:"",
-      nuit:"",
-      endereco:"",
+      contacto: "",
+      email: "",
+      nuit: "",
+      endereco: "",
       utilizadores: [],
     };
   },
@@ -286,7 +253,7 @@ export default {
         }
       });
     },
-  saveData() {
+    saveData() {
       let token = localStorage.getItem("token");
       let config = {
         headers: {
@@ -294,13 +261,13 @@ export default {
         },
       };
       const data = {
-         name: this.name,
-      email: this.email,
-      password: "",
-      type: 'admin', // Ou o tipo que você desejar
+        name: this.nome,
+        email: this.email,
+        password: this.password,
+        type: this.tipo, // Ou o tipo que você desejar
       };
       http
-        .post("/users", data, config)
+        .post("/users/registar", data, config)
         .then((result) => {
           this.$swal({
             title: "Sucesso!",
@@ -308,12 +275,14 @@ export default {
             icon: "success",
             confirmButtonText: "OK",
           });
-          nome="",
-      tipo="",
-      contacto="",
-      email="",
-      nuit="",
-      endereco=""
+          this.$bvModal.hide("add");
+          this.getData(),
+            (nome = ""),
+            (tipo = ""),
+            (contacto = ""),
+            (email = ""),
+            (nuit = ""),
+            (endereco = "");
         })
         .catch((error) => {});
     },

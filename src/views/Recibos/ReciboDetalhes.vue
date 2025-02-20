@@ -2,7 +2,7 @@
   <b-row>
     <b-col lg="11">
       <!-- {{maoDeObras}} -->
-      <b-row class="invoice-page">
+      <b-row ref="conteudo" class="invoice-page">
         <b-col xs="12">
           <Widget>
             <header>
@@ -19,7 +19,7 @@
                     <small>{{ recibo.createdAt}}</small>
                   </h4>
                   <div class="text-muted fs-larger text-right">
-                    <strong>Estado: </strong>
+                    <!-- <strong>Estado: </strong> -->
                     <span>
                       <!-- <b-badge
                         :variant="
@@ -59,7 +59,7 @@
                   <address>
                    
                       <strong>Forma de pagamento: </strong>{{recibo.formaPagamento }} <br>
-                       <strong>Numero de cheque: </strong>{{recibo.numeroCheque }} <br>
+                       <strong v-if="recibo.formaPagamento!='numerario'">Numero de cheque: </strong>{{recibo.numeroCheque }} <br>
                    
                   </address>
                 </b-col>
@@ -79,6 +79,7 @@
                 <tbody>
                   <tr v-for="(factura, index) in recibo.Facturas" :key="index">
                   <td>{{index + 1}}</td>
+                  {{factura}}
                       <td>{{factura.codigoFactura}}</td>
                     <td>{{factura.codigoFactura}}</td>
                     <td>{{factura.createdAt}}</td>
@@ -114,8 +115,14 @@
               <p class="text-right">
                 <span class="fw-semi-bold">Bob Smith</span>
               </p> -->
-              <b-button-toolbar class="mt-lg justify-content-end d-print-none">
-                <b-button onClick="{this.printInvoice}" variant="inverse" class="mr-2">
+             
+            </section>
+            
+          </Widget>
+        </b-col>
+      </b-row>
+       <b-button-toolbar class="mt-lg justify-content-end d-print-none">
+                <b-button onClick="{this.printInvoice}" variant="inverse" class="mr-2"  @click="gerarPDF">
                   <i class="fa fa-print" />
                   &nbsp;&nbsp; Imprimir
                 </b-button>
@@ -126,10 +133,6 @@
                   </span>
                 </b-button> -->
               </b-button-toolbar>
-            </section>
-          </Widget>
-        </b-col>
-      </b-row>
     </b-col>
     <b-modal
       id="add"
@@ -201,6 +204,7 @@
 </template>
 
 <script>
+import html2pdf from "html2pdf.js";
 import http from "../../../http-common.js";
 import vSelect from "vue-select";
 export default {
@@ -220,7 +224,20 @@ export default {
     this.getData();
   },
   methods: {
-    
+     gerarPDF() {
+      const elemento = this.$refs.conteudo; // Referência ao elemento que será convertido
+
+      html2pdf()
+        .set({
+          margin: 10,
+          filename: "documento.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        })
+        .from(elemento)
+        .save();
+    },
    
 
     getData() {

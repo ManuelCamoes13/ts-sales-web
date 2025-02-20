@@ -1,11 +1,10 @@
 <template>
   <b-row>
     <b-col lg="11">
-    <!-- {{maoDeObras}} -->
-      <b-row class="invoice-page">
+      <!-- {{maoDeObras}} -->
+      <b-row ref="conteudo" class="invoice-page">
         <b-col xs="12">
           <Widget>
-         
             <header>
               <b-row>
                 <b-col md="6" xs="12" class="b-col-print-6">
@@ -73,7 +72,7 @@
                 </b-col>
               </b-row>
 
-              <table class="table table-striped">
+              <table v-if="produtos.length!=0" class="table table-striped">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -86,21 +85,19 @@
                 </thead>
                 <tbody>
                   <tr v-for="(produto, index) in produtos" :key="index">
-                      <td>{{ index + 1 }}</td>
-                    <td>{{produto.nome}}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ produto.nome }}</td>
                     <td class="hidden-sm-down d-print-none">
-                     {{produto.descricao}}
+                      {{ produto.descricao }}
                     </td>
-                    <td>{{produto.venda_produtos.quantidade}} {{produto.unidade}}</td>
-                    <td class="hidden-sm-down d-print-none">{{produto.preco}}</td>
-                    <td>{{produto.preco * produto.venda_produtos.quantidade}}</td>
+                    <td>{{ produto.venda_produtos.quantidade }} {{ produto.unidade }}</td>
+                    <td class="hidden-sm-down d-print-none">{{ produto.preco }}</td>
+                    <td>{{ produto.preco * produto.venda_produtos.quantidade }}</td>
                   </tr>
-
-                 
                 </tbody>
               </table>
 
- <table class="table table-striped">
+              <table  v-if="maoDeObras.length!=0" class="table table-striped">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -112,137 +109,156 @@
                   </tr>
                 </thead>
                 <tbody>
-                
                   <tr v-for="(maoDeObra, index) in maoDeObras" :key="index">
-                <td>  {{ index + 1 }}</td>
-                    <td>{{maoDeObra.nome}}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ maoDeObra.nome }}</td>
                     <td class="hidden-sm-down d-print-none">
-                    {{maoDeObra.categoria_id}}
+                      {{ maoDeObra.categoria_id }}
                     </td>
-                    <td>{{maoDeObra.venda_mao_de_obras.quantidade}}</td>
-                    <td class="hidden-sm-down d-print-none">{{maoDeObra.venda_mao_de_obras.preco}}</td>
-                    <td>{{maoDeObra.venda_mao_de_obras.preco * maoDeObra.venda_mao_de_obras.quantidade}}</td>
+                    <td>{{ maoDeObra.venda_mao_de_obras.quantidade }}</td>
+                    <td class="hidden-sm-down d-print-none">
+                      {{ maoDeObra.venda_mao_de_obras.preco }}
+                    </td>
+                    <td>
+                      {{
+                        maoDeObra.venda_mao_de_obras.preco *
+                        maoDeObra.venda_mao_de_obras.quantidade
+                      }}
+                    </td>
                   </tr>
-                 
                 </tbody>
               </table>
-             <b-row>
-  <b-col xs="12" md="8" class="b-col-print-6">
-    <p>
-      <strong>Note:</strong>
-      Alguma nota na factura
-    </p>
-  </b-col>
-  <b-col md="4" xs="12" class="b-col-print-6">
-    <b-row class="text-right justify-content-end">
-      <b-col xs="6"></b-col>
-      <b-col sm="3">
-        <p>Subtotal</p>
-        <p>IVA(16%)</p>
-        <p>Desconto</p>
-        <p class="no-margin"><strong>Total</strong></p>
-      </b-col>
-      <b-col sm="3">
-        <p>{{ subtotal }}</p>
-        <p>{{ iva }}</p>
-        <p>0</p>
-        <p class="no-margin"><strong>{{ total }}</strong></p>
-      </b-col>
-    </b-row>
-  </b-col>
-</b-row>
+              <b-row>
+                <b-col xs="12" md="8" class="b-col-print-6">
+                  <!-- <p>
+                    <strong>Note:</strong>
+                    Alguma nota na factura
+                  </p> -->
+                </b-col>
+                <b-col md="4" xs="12" class="b-col-print-6">
+                  <b-row class="text-right justify-content-end">
+                    <b-col xs="6"></b-col>
+                    <b-col sm="3">
+                      <p>Subtotal</p>
+                      <p>IVA(16%)</p> 
+                      <p>Desconto</p>
+                      <p class="no-margin"><strong>Total</strong></p>
+                    </b-col>
+                    <b-col sm="3">
+                      <p>{{ subtotal }}.MT</p>
+                      <p>{{ iva }}.MT</p>
+                      <p>0</p>
+                      <p class="no-margin">
+                        <strong>{{ total }}.MT</strong>
+                      </p>
+                    </b-col>
+                  </b-row>
+                </b-col>
+              </b-row>
               <!-- <p class="text-right mt-lg mb-xs">Marketing Consultant</p>
               <p class="text-right">
                 <span class="fw-semi-bold">Bob Smith</span>
               </p> -->
-              <b-button-toolbar class="mt-lg justify-content-end d-print-none">
-                <b-button onClick="{this.printInvoice}" variant="inverse" class="mr-2">
-                  <i class="fa fa-print" />
-                  &nbsp;&nbsp; Imprimir
-                </b-button>
-                <b-button v-if=" factura.venda.factura.estado == 'pendente'" variant="success" v-b-modal.add>
-                  Efectuar pagamento &nbsp;
-                  <span class="circle bg-white">
-                    <i class="fa fa-arrow-right text-success" />
-                  </span>
-                </b-button>
-              </b-button-toolbar>
             </section>
           </Widget>
         </b-col>
       </b-row>
     </b-col>
-  <b-modal
-    id="add"
-    title="Efectuar pagamento"
-    body-class="bg-white"
-    cancel-variant="default"
-    hide-footer
-  >
-    <b-form @submit.prevent="handleSubmit">
-      <label>Forma de pagamento</label>
-      
-      <b-form-group class="radio abc-radio">
-        <input 
-          type="radio" 
-          name="radio1" 
-          id="radio-small" 
-          v-model="formaPagamento" 
-          value="numerario" 
-        />
-        <label for="radio-small">Numerario</label>
-      </b-form-group>
+    <b-modal
+      id="add"
+      title="Efectuar pagamento"
+      body-class="bg-white"
+      cancel-variant="default"
+      hide-footer
+    >
+      <b-form @submit.prevent="handleSubmit">
+        <label>Forma de pagamento</label>
 
-      <b-form-group class="radio abc-radio">
-        <input 
-          type="radio" 
-          name="radio1" 
-          id="radio-big" 
-          v-model="formaPagamento" 
-          value="cheque" 
-        />
-        <label for="radio-big">Cheque</label>
-      </b-form-group>
+        <b-form-group class="radio abc-radio">
+          <input
+            type="radio"
+            name="radio1"
+            id="radio-small"
+            v-model="formaPagamento"
+            value="numerario"
+          />
+          <label for="radio-small">Numerario</label>
+        </b-form-group>
 
-      <!-- Campo número do cheque aparece apenas se a opção "cheque" for selecionada -->
-      <b-form-group
-        v-if="formaPagamento === 'cheque'"
-        label="Numero do cheque"
-        label-for="search-field"
-        breakpoint="md"
-      >
-        <input
-          v-validate="'required'"
-          name="simple"
-          :class="{ 'form-control': true, 'is-invalid': errors.has('simple') }"
-          type="number"
-          id="basic"
-          v-model="numeroCheque"
-        />
-        <span class="text-danger" v-if="errors.has('simple')">
-          {{ errors.first("simple") }}
-        </span>
-      </b-form-group>
+        <b-form-group class="radio abc-radio">
+          <input
+            type="radio"
+            name="radio1"
+            id="radio-big"
+            v-model="formaPagamento"
+            value="cheque"
+          />
+          <label for="radio-big">Cheque</label>
+        </b-form-group>
 
-      <div class="form-action bg-transparent px-0">
-        <b-button
-          type="submit"
-          variant="success"
-          class="btn-rounded float-right"
-          @click="saveData"
+        <!-- Campo número do cheque aparece apenas se a opção "cheque" for selecionada -->
+        <b-form-group
+          v-if="formaPagamento === 'cheque'"
+          label="Numero do cheque"
+          label-for="search-field"
+          breakpoint="md"
         >
-          Salvar
+          <input
+            v-validate="'required'"
+            name="simple"
+            :class="{ 'form-control': true, 'is-invalid': errors.has('simple') }"
+            type="number"
+            id="basic"
+            v-model="numeroCheque"
+          />
+          <span class="text-danger" v-if="errors.has('simple')">
+            {{ errors.first("simple") }}
+          </span>
+        </b-form-group>
+
+        <div class="form-action bg-transparent px-0">
+          <b-button
+            type="submit"
+            variant="success"
+            class="btn-rounded float-right"
+            @click="saveData"
+          >
+            Salvar
+          </b-button>
+          <b-button type="button" variant="default" class="btn-rounded">
+            Cancelar
+          </b-button>
+        </div>
+      </b-form>
+    </b-modal>
+    <b-col>
+      <b-button-toolbar class="mt-lg justify-content-end d-print-none">
+        <b-button
+          onClick="{this.printInvoice}"
+          variant="inverse"
+          class="mr-2"
+          @click="gerarPDF"
+        >
+          <i class="fa fa-print" />
+          &nbsp;&nbsp; Imprimir
         </b-button>
-        <b-button type="button" variant="default" class="btn-rounded">
-          Cancelar
+        <b-button
+          v-if="factura.venda.factura.estado == 'pendente'"
+          variant="success"
+          v-b-modal.add
+        >
+          Efectuar pagamento &nbsp;
+          <span class="circle bg-white">
+            <i class="fa fa-arrow-right text-success" />
+          </span>
         </b-button>
-      </div>
-    </b-form>
-  </b-modal>
+      </b-button-toolbar>
+    </b-col>
   </b-row>
 </template>
 
 <script>
+import html2pdf from "html2pdf.js";
 import http from "../../../../http-common.js";
 import vSelect from "vue-select";
 export default {
@@ -253,45 +269,60 @@ export default {
       unidade: "pcs",
 
       factura: [],
-      produtos:[],
-      maoDeObras:[],
-      formaPagamento:'numerario'
+      produtos: [],
+      maoDeObras: [],
+      formaPagamento: "numerario",
     };
   },
 
   computed: {
-  // Subtotal que agora inclui produtos e mãos de obra
-  subtotal() {
-    // Soma o valor dos produtos com o valor das mãos de obra
-    const produtosTotal = this.produtos.reduce(
-      (acc, produto) => acc + produto.preco * produto.venda_produtos.quantidade,
-      0
-    );
+    // Subtotal que agora inclui produtos e mãos de obra
+    subtotal() {
+      // Soma o valor dos produtos com o valor das mãos de obra
+      const produtosTotal = this.produtos.reduce(
+        (acc, produto) => acc + produto.preco * produto.venda_produtos.quantidade,
+        0
+      );
 
-    const maoDeObrasTotal = this.maoDeObras.reduce(
-      (acc, maoDeObra) => acc + maoDeObra.venda_mao_de_obras.preco * maoDeObra.venda_mao_de_obras.quantidade,
-      0
-    );
+      const maoDeObrasTotal = this.maoDeObras.reduce(
+        (acc, maoDeObra) =>
+          acc +
+          maoDeObra.venda_mao_de_obras.preco * maoDeObra.venda_mao_de_obras.quantidade,
+        0
+      );
 
-    return produtosTotal + maoDeObrasTotal;
+      return produtosTotal + maoDeObrasTotal;
+    },
+
+    // Calcula 16% do subtotal
+    iva() {
+      return this.subtotal * 0.16;
+    },
+
+    // Soma subtotal + IVA
+    total() {
+      return this.subtotal + this.iva;
+    },
   },
-
-  // Calcula 16% do subtotal
-  iva() {
-    return this.subtotal * 0.16;
-  },
-
-  // Soma subtotal + IVA
-  total() {
-    return this.subtotal + this.iva;
-  }
-}
-,
-
   mounted() {
     this.getData();
   },
   methods: {
+    gerarPDF() {
+      const elemento = this.$refs.conteudo; // Referência ao elemento que será convertido
+
+      html2pdf()
+        .set({
+          margin: 10,
+          filename: "documento.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        })
+        .from(elemento)
+        .save();
+    },
+
     saveData() {
       this.$validator.validateAll();
       let token = localStorage.getItem("token");
@@ -303,8 +334,8 @@ export default {
       const data = {
         facturas: [this.factura.venda.factura.id],
         formaPagamento: this.formaPagamento,
-        numeroCheque:this.numeroCheque,
-        estado:"pago"
+        numeroCheque: this.numeroCheque,
+        estado: "pago",
       };
       http
         .post("/recibos", data, config)
@@ -329,7 +360,7 @@ export default {
           });
         });
     },
- updateFactura() {
+    updateFactura() {
       let token = localStorage.getItem("token");
       let config = {
         headers: {
@@ -338,7 +369,6 @@ export default {
       };
       const data = {
         estado: "pago",
-        
       };
       http
         .put(`/venda/${facturaId}`, data, config)
@@ -364,7 +394,6 @@ export default {
         });
     },
 
-
     getData() {
       let token = localStorage.getItem("token");
       let config = {
@@ -373,11 +402,10 @@ export default {
         },
       };
 
-       const facturaId = this.$route.params.facturaId;
-
+      const facturaId = this.$route.params.facturaId;
 
       http
-       .get(`/venda/${facturaId}`, config)
+        .get(`/venda/${facturaId}`, config)
         .then((result) => {
           this.factura = result.data;
           this.produtos = result.data.venda.produtos;

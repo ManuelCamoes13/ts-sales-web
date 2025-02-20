@@ -25,14 +25,14 @@
             { header: 'Widgets', link: '/app/main/widgets' },
           ]"
         /> -->
-        <NavLink
+        <!-- <NavLink
           :activeItem="activeItem"
           header="Dashboard"
           link="/app/dashboard/main"
           iconName="flaticon-layers-2"
           index="dashboardmain"
           isHeader
-        />
+        /> -->
        <NavLink
           :activeItem="activeItem"
           header="Clientes"
