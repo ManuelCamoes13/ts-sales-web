@@ -1,5 +1,5 @@
 const path = require('path');
-let publicPath = process.env.NODE_ENV === 'production' ? 'sing-app-vue/' : '/';
+let publicPath = process.env.NODE_ENV === 'production' ? '/' : '/'
 
 module.exports = {
   publicPath,

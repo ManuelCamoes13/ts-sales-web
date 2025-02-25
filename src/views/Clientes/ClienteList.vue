@@ -129,7 +129,6 @@
 
           <b-form-group label="Email " label-breakpoint="md" label-for="basic">
             <input
-              v-validate="'required'"
               name="email"
               :class="{ 'form-control': true, 'is-invalid': errors.has('email') }"
               type="email"

@@ -2,9 +2,9 @@
   <div class="auth-page">
     <b-container>
       <h5 class="auth-logo">
-        <i class="fa fa-circle text-primary"></i>
-        TS-Sales
-        <i class="fa fa-circle text-danger"></i>
+        <!-- <i class="fa fa-circle text-primary"></i> -->
+        <img src="../../assets/careca.jpg" width="150" alt="Logo" class="invoiceLogo" />
+        <!-- <i class="fa fa-circle text-danger"></i> -->
       </h5>
       <Widget class="widget-auth mx-auto" title="<h3 class='mt-0'>Entre com a sua conta</h3>" customHeader>
         

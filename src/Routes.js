@@ -246,10 +246,10 @@ export default new Router({
       path: '/app',
       name: 'Layout',
       component: Layout,
-      beforeEnter: (to, from, next) => {
-        let token = localStorage.getItem('token');
-        isAuthenticated(token) ? next() : next({ path: '/login' });
-      },
+      // beforeEnter: (to, from, next) => {
+      //   let token = localStorage.getItem('token');
+      //   isAuthenticated(token) ? next() : next({ path: '/login' });
+      // },
       children: [
         // main pages
 
