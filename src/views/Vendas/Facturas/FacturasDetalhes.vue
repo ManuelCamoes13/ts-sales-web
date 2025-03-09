@@ -1,25 +1,8 @@
 <template>
   <b-row>
     <b-col lg="11">
-      <!-- {{maoDeObras}} -->
-      <b-row ref="conteudo" class="invoice-page">
-        <b-col xs="12">
-          <Widget>
-            <header>
-              <b-row>
-                <b-col md="6" xs="12" class="b-col-print-6">
-                  <img src="../../../assets/careca.jpg" alt="Logo" class="invoiceLogo" />
-                </b-col>
-                <b-col md="6" xs="12" class="b-col-print-6">
-                  <h4 class="text-right">
-                    #<span class="fw-semi-bold">
-                      {{ factura.venda.factura.codigoFactura }}</span
-                    >
-                    /
-                    <small>{{ factura.venda.factura.data }}</small>
-                  </h4>
-                  <div class="text-muted fs-larger text-right">
-                    <strong>Estado: </strong>
+     <div class="text-muted fs-larger text-right mb-5">
+                    <strong>Estado da factura: </strong>
                     <span>
                       <b-badge
                         :variant="
@@ -32,6 +15,37 @@
                       </b-badge>
                     </span>
                   </div>
+      <b-row ref="conteudo" class="invoice-page">
+        <b-col xs="12">
+          <Widget>
+            <header>
+              <b-row>
+                <b-col md="6" xs="12" class="b-col-print-6">
+                  <img src="../../../assets/careca.jpg" alt="Logo" class="invoiceLogo" />
+                </b-col>
+                <b-col md="6" xs="12" class="b-col-print-6">
+                  <h4 class="text-right">
+                    #<span class="fw-semi-bold">
+                   
+                      {{ factura.venda.factura.codigoFactura }}</span
+                    >
+                    /
+                    <small>{{formatarData(factura.venda.factura.data) }}</small>
+                  </h4>
+                  <!-- <div class="text-muted fs-larger text-right">
+                    <strong>Estado: </strong>
+                    <span>
+                      <b-badge
+                        :variant="
+                          factura.venda.factura.estado === 'pendente'
+                            ? 'warning'
+                            : 'success'
+                        "
+                      >
+                        {{ factura.venda.factura.estado }}
+                      </b-badge>
+                    </span>
+                  </div> -->
                 </b-col>
               </b-row>
             </header>
@@ -48,10 +62,7 @@
                     <abbr title="Work email">e-mail: </abbr>
                     <a href="mailto:#">carecatubos@gmail.com</a><br />
                   </address>
-                  <h6 class="fw-semi-bold no-margin">Formas de pagamento</h6>
-                  <strong>BCI: </strong>0000000009126718275<br />
-                  <strong>MBIM: </strong>000000000332319887<br />
-                  <strong>Mpesa: </strong>84 00 00 000<br />
+                  
                 </b-col>
 
                 <b-col sm="6" class="b-col-print-6 text-right">
@@ -90,7 +101,10 @@
                     <td class="hidden-sm-down d-print-none">
                       {{ produto.descricao }}
                     </td>
-                    <td>{{ produto.venda_produtos.quantidade }} {{ produto.unidade }}</td>
+                    <td>
+  {{ produto.unidade === "pcs" ? Math.trunc(produto.venda_produtos.quantidade) : produto.venda_produtos.quantidade }}
+  {{ produto.unidade }}
+</td>
                     <td class="hidden-sm-down d-print-none">{{ produto.preco }}</td>
                     <td>{{ produto.preco * produto.venda_produtos.quantidade }}</td>
                   </tr>
@@ -141,13 +155,13 @@
                     <b-col sm="3">
                       <p>Subtotal</p>
                       <p>IVA(16%)</p> 
-                      <p>Desconto</p>
+                      <p v-if="factura.venda.desconto!=0">Desconto</p>
                       <p class="no-margin"><strong>Total</strong></p>
                     </b-col>
                     <b-col sm="3">
                       <p>{{ subtotal }}.MT</p>
                       <p>{{ iva }}.MT</p>
-                      <p>0</p>
+                      <p v-if="factura.venda.desconto!=0">{{factura.venda.desconto}}</p>
                       <p class="no-margin">
                         <strong>{{ total }}.MT</strong>
                       </p>
@@ -155,10 +169,9 @@
                   </b-row>
                 </b-col>
               </b-row>
-              <!-- <p class="text-right mt-lg mb-xs">Marketing Consultant</p>
-              <p class="text-right">
-                <span class="fw-semi-bold">Bob Smith</span>
-              </p> -->
+             <h6 class="fw-semi-bold no-margin">Formas de pagamento</h6>
+                  <strong>Conta Millenium: </strong>548839387<br />
+                  <strong>NIB: </strong>0001 0000 0054 8839 38757<br />
             </section>
           </Widget>
         </b-col>
@@ -308,6 +321,19 @@ export default {
     this.getData();
   },
   methods: {
+
+formatarData(data) {
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date(data));
+    },
+
+
     gerarPDF() {
       const elemento = this.$refs.conteudo; // Referência ao elemento que será convertido
 

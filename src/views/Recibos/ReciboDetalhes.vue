@@ -16,7 +16,7 @@
                      {{ recibo.codigo}}</span
                     >
                     /
-                    <small>{{ recibo.createdAt}}</small>
+                    <small>{{formatarData(recibo.createdAt)}}</small>
                   </h4>
                   <div class="text-muted fs-larger text-right">
                     <!-- <strong>Estado: </strong> -->
@@ -79,8 +79,8 @@
                 <tbody>
                   <tr v-for="(factura, index) in recibo.Facturas" :key="index">
                   <td>{{index + 1}}</td>
-                  {{factura}}
-                      <td>{{factura.codigoFactura}}</td>
+                  {{factura.codigoFactura}}
+                      <td>{{factura}}</td>
                     <td>{{factura.codigoFactura}}</td>
                     <td>{{factura.createdAt}}</td>
                   </tr>
@@ -224,6 +224,17 @@ export default {
     this.getData();
   },
   methods: {
+formatarData(data) {
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date(data));
+    },
+
      gerarPDF() {
       const elemento = this.$refs.conteudo; // Referência ao elemento que será convertido
 
