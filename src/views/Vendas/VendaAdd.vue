@@ -76,23 +76,20 @@
                       variant="success"
                       size="xs"
                       @click="decreaseQuantity(produto)"
-                      ><i class="la la-plus"
-                    /></b-button>
+                      >-</b-button>
                     <input
                       v-model.number="produto.quantidade"
                       type="number"
                       id="quantity-1"
                       value="1"
-                      min="1"
+                      min="0.1"
                       max="20"
                     />
-
                     <b-button
                       variant="success"
                       size="xs"
                       @click="increaseQuantity(produto)"
-                      ><i class="la la-plus"
-                    /></b-button>
+                      >+</b-button>
                   </div>
                 </td>
                 <td>
@@ -585,7 +582,7 @@ export default {
         produtos: this.produtosSelecionados.map((produto) => ({
           produto_id: produto.id,
           nome: produto.nome,
-          quantidade: parseInt(produto.quantidade),
+          quantidade: parseFloat(produto.quantidade),
           preco_unitario: parseFloat(produto.preco),
         })),
         // mao_de_obra_id: this.maoDeObraSelecionados // apenas os IDs da mão-de-obra

@@ -40,6 +40,7 @@
                   breakpoint="md"
                 >
                   <input
+                    v-model="numeroCheque"
                     v-validate="'required'"
                     name="simple"
                     :class="{ 'form-control': true, 'is-invalid': errors.has('simple') }"
@@ -124,46 +125,45 @@
               </tr>
             </thead>
             <tbody>
-             <tr v-for="(factura, index) in filteredFacturas" :key="index">
-  <td>
-    <!-- Checkbox para selecionar a fatura -->
-    <input
-      size="lg"
-      type="checkbox"
-      :value="factura.factura.id"
-      v-model="selectedFacturas"
-    />
-  </td>
-  <td>{{ factura.factura.codigoFactura }}</td>
-  <td>{{ factura.cliente.nome }}</td>
-  <td>{{ factura.factura.data }}</td>
-  <td>
-    <b-badge
-      :variant="
-        factura.factura.estado === 'pendente' ? 'warning' : 'success'
-      "
-    >
-      {{ factura.factura.estado }}
-    </b-badge>
-  </td>
-  <td>
-    <b-button-group class="mb-3">
-      <b-button
-        target="_blank"
-        size="xs"
-        variant="primary"
-        :to="{
-          name: 'factura-detalhes',
-          params: { facturaId: factura.id },
-        }"
-      >
-        <i class="fa fa-eye mr-0 mb-xs" />
-        Ver</b-button
-      >
-    </b-button-group>
-  </td>
-</tr>
-
+              <tr v-for="(factura, index) in filteredFacturas" :key="index">
+                <td>
+                  <!-- Checkbox para selecionar a fatura -->
+                  <input
+                    size="lg"
+                    type="checkbox"
+                    :value="factura.factura.id"
+                    v-model="selectedFacturas"
+                  />
+                </td>
+                <td>{{ factura.factura.codigoFactura }}</td>
+                <td>{{ factura.cliente.nome }}</td>
+                <td>{{ formatarData(factura.factura.data) }}</td>
+                <td>
+                  <b-badge
+                    :variant="
+                      factura.factura.estado === 'pendente' ? 'warning' : 'success'
+                    "
+                  >
+                    {{ factura.factura.estado }}
+                  </b-badge>
+                </td>
+                <td>
+                  <b-button-group class="mb-3">
+                    <b-button
+                      target="_blank"
+                      size="xs"
+                      variant="primary"
+                      :to="{
+                        name: 'factura-detalhes',
+                        params: { facturaId: factura.id },
+                      }"
+                    >
+                      <i class="fa fa-eye mr-0 mb-xs" />
+                      Ver</b-button
+                    >
+                  </b-button-group>
+                </td>
+              </tr>
             </tbody>
           </table>
         </Widget>
@@ -182,6 +182,7 @@ export default {
   components: { Widget, vSelect },
   data() {
     return {
+      numeroCheque: "",
       formaPagamento: "numerario",
       facturas: [],
       selectedFacturas: [],
@@ -197,12 +198,10 @@ export default {
       categorias: [],
     };
   },
-   computed: {
+  computed: {
     filteredFacturas() {
       // Retorna apenas as faturas com estado "pendente"
-      return this.facturas.filter(
-        (factura) => factura.factura.estado === 'pendente'
-      );
+      return this.facturas.filter((factura) => factura.factura.estado === "pendente");
     },
   },
 
@@ -210,6 +209,16 @@ export default {
     this.getData();
   },
   methods: {
+    formatarData(data) {
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date(data));
+    },
     onSubmit(e) {
       e.preventDefault();
 
@@ -217,7 +226,12 @@ export default {
         if (isValid) {
           this.saveData();
         } else {
-          alert("ok");
+          this.$swal({
+            title: "Erro!",
+            text: "A Operação Falhou!",
+            icon: "Error",
+            confirmButtonText: "OK",
+          });
         }
       });
     },
@@ -248,7 +262,8 @@ export default {
       };
       const data = {
         facturas: this.selectedFacturas,
-        formaPagamento: "numerario",
+        formaPagamento: this.formaPagamento,
+        numeroCheque: this.numeroCheque,
         estado: "pago",
       };
       http

@@ -2,6 +2,23 @@
   <b-row>
     <b-col lg="11">
       <!-- {{maoDeObras}} -->
+      <b-button-toolbar class="mt-lg mb-lg justify-content-end d-print-none">
+        <b-button
+          onClick="{this.printInvoice}"
+          variant="inverse"
+          class="mr-2"
+          @click="gerarPDF"
+        >
+          <i class="fa fa-print" />
+          &nbsp;&nbsp; Imprimir
+        </b-button>
+        <!-- <b-button variant="success" v-b-modal.add>
+                  Efectuar pagamento &nbsp;
+                  <span class="circle bg-white">
+                    <i class="fa fa-arrow-right text-success" />
+                  </span>
+                </b-button> -->
+      </b-button-toolbar>
       <b-row ref="conteudo" class="invoice-page">
         <b-col xs="12">
           <Widget>
@@ -12,11 +29,9 @@
                 </b-col>
                 <b-col md="6" xs="12" class="b-col-print-6">
                   <h4 class="text-right">
-                    #<span class="fw-semi-bold">
-                     {{ recibo.codigo}}</span
-                    >
+                    #<span class="fw-semi-bold"> {{ recibo.codigo }}</span>
                     /
-                    <small>{{formatarData(recibo.createdAt)}}</small>
+                    <small>{{ formatarData(recibo.createdAt) }}</small>
                   </h4>
                   <div class="text-muted fs-larger text-right">
                     <!-- <strong>Estado: </strong> -->
@@ -41,11 +56,13 @@
                   <h5 class="text-muted no-margin">Informações da Empresa</h5>
                   <h3 class="company-name m-t-1">Careca Tubos</h3>
                   <address>
-                    <strong>Av. Mocambique, Maputo</strong><br />
+                    <strong>Av. Mocambique, Maputo. N 3519/11 </strong><br />
                     Bairro Nsalene<br />
-                    <strong>NUIT: </strong>1234456789<br />
-                    <abbr title="Work Fax">Telefone: </abbr> +258 84 00 00 000 <br />
-                    <abbr title="Work email">e-mail: </abbr>
+                    <strong>NUIT: </strong>111 216 517<br />
+                    <span title="Work Fax">Telefone: </span> +258 85 58 88 884 | 84 38 02
+                    142 <br />
+                    <span>site: </span>www.carecatubos.co.mz<br />
+                    <span title="Work email">e-mail: </span>
                     <a href="mailto:#">carecatubos@gmail.com</a><br />
                   </address>
                   <!-- <h6 class="fw-semi-bold no-margin">Formas de pagamento</h6>
@@ -54,13 +71,14 @@
                   <strong>Mpesa: </strong>84 00 00 000<br /> -->
                 </b-col>
 
-                 <b-col sm="6" class="b-col-print-6 text-right">
+                <b-col sm="6" class="b-col-print-6 text-right">
                   <h5 class="text-muted no-margin">Informações do pagamento</h5>
                   <address>
-                   
-                      <strong>Forma de pagamento: </strong>{{recibo.formaPagamento }} <br>
-                       <strong v-if="recibo.formaPagamento!='numerario'">Numero de cheque: </strong>{{recibo.numeroCheque }} <br>
-                   
+                    <strong>Forma de pagamento: </strong>{{ recibo.formaPagamento }}
+                    <br />
+                    <strong v-if="recibo.formaPagamento != 'numerario'"
+                      >Numero de cheque: </strong
+                    >{{ recibo.numeroCheque }} <br />
                   </address>
                 </b-col>
               </b-row>
@@ -70,23 +88,55 @@
                   <tr>
                     <th>#</th>
                     <th>Factura</th>
-                    <th class="hidden-sm-down d-print-none">Cliente</th>
+                    <!-- <th class="hidden-sm-down d-print-none">Cliente</th> -->
                     <th>Emitido em</th>
+                    <th>Pago em</th>
                     <!-- <th class="hidden-sm-down d-print-none">Preço unitario</th>
                     <th>Total</th> -->
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(factura, index) in recibo.Facturas" :key="index">
-                  <td>{{index + 1}}</td>
-                  {{factura.codigoFactura}}
-                      <td>{{factura}}</td>
-                    <td>{{factura.codigoFactura}}</td>
-                    <td>{{factura.createdAt}}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>
+                      <a
+                        v-if="factura && factura.id"
+                        :href="
+                          $router.resolve({
+                            name: 'factura-detalhes',
+                            params: { facturaId: factura.id },
+                          }).href
+                        "
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {{ factura.codigoFactura }}
+                      </a>
+                      <span v-else>N/A</span>
+                    </td>
+
+                    <td>{{ formatarData(factura.createdAt) }}</td>
+                    <td>{{ formatarData(recibo.createdAt) }}</td>
                   </tr>
+
+                  <!-- <tr v-for="(factura, index) in recibo.Facturas" :key="index">
+                  <td>{{index + 1}}</td>
+                <td>
+  <router-link 
+    v-if="factura && factura.id" 
+    :to="{ name: 'factura-detalhes', params: { facturaId: factura.id } }">
+    {{ factura.codigoFactura }}
+  </router-link>
+  <span v-else>N/A</span>
+</td>
+
+                     
+                    <td>{{formatarData(factura.createdAt)}}</td>
+                    <td>{{formatarData(factura.updatedAt)}}</td>
+                  </tr> -->
                 </tbody>
               </table>
-
+              <!-- {{recibo.Facturas}} -->
               <b-row>
                 <b-col xs="12" md="8" class="b-col-print-6">
                   <!-- <p>
@@ -111,28 +161,20 @@
                   </b-row>
                 </b-col>
               </b-row>
-              <!-- <p class="text-right mt-lg mb-xs">Marketing Consultant</p>
-              <p class="text-right">
-                <span class="fw-semi-bold">Bob Smith</span>
-              </p> -->
-             
+              <h6 class="fw-semi-bold no-margin">Assinatura</h6>
+              <br />
+              <sapn class="mt-5">____________________________________________</sapn>
             </section>
-            
           </Widget>
         </b-col>
       </b-row>
-       <b-button-toolbar class="mt-lg justify-content-end d-print-none">
+      <!-- <b-button-toolbar class="mt-lg justify-content-end d-print-none">
                 <b-button onClick="{this.printInvoice}" variant="inverse" class="mr-2"  @click="gerarPDF">
                   <i class="fa fa-print" />
                   &nbsp;&nbsp; Imprimir
                 </b-button>
-                <!-- <b-button variant="success" v-b-modal.add>
-                  Efectuar pagamento &nbsp;
-                  <span class="circle bg-white">
-                    <i class="fa fa-arrow-right text-success" />
-                  </span>
-                </b-button> -->
-              </b-button-toolbar>
+                
+              </b-button-toolbar> -->
     </b-col>
     <b-modal
       id="add"
@@ -215,33 +257,32 @@ export default {
       unidade: "pcs",
 
       facturas: [],
-      recibo:[]
+      recibo: [],
     };
   },
 
- 
   mounted() {
     this.getData();
   },
   methods: {
-formatarData(data) {
-      return new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
+    formatarData(data) {
+      return new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
       }).format(new Date(data));
     },
 
-     gerarPDF() {
+    gerarPDF() {
       const elemento = this.$refs.conteudo; // Referência ao elemento que será convertido
-
+      const nomeArquivo = this.recibo.codigo + ".pdf";
       html2pdf()
         .set({
           margin: 10,
-          filename: "documento.pdf",
+          filename: nomeArquivo,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2 },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
@@ -249,7 +290,22 @@ formatarData(data) {
         .from(elemento)
         .save();
     },
-   
+
+    getFactura() {
+      let token = localStorage.getItem("token");
+      let config = {
+        headers: {
+          authorization: "Bearer " + token,
+        },
+      };
+
+      http
+        .get("/venda", config)
+        .then((result) => {
+          this.facturas = result.data.vendas.reverse();
+        })
+        .catch((error) => {});
+    },
 
     getData() {
       let token = localStorage.getItem("token");

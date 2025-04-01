@@ -1,7 +1,8 @@
 <template>
   <b-row>
     <b-col lg="11">
-     <div class="text-muted fs-larger text-right mb-5">
+    
+     <div class="text-muted fs-larger text-right mb-2">
                     <strong>Estado da factura: </strong>
                     <span>
                       <b-badge
@@ -15,6 +16,30 @@
                       </b-badge>
                     </span>
                   </div>
+                  <br>
+                   <b-col>
+      <b-button-toolbar class="mb-md justify-content-end d-print-none">
+        <b-button
+          onClick="{this.printInvoice}"
+          variant="inverse"
+          class="mr-2"
+          @click="gerarPDF"
+        >
+          <i class="fa fa-print" />
+          &nbsp;&nbsp; Imprimir
+        </b-button>
+        <b-button
+          v-if="factura.venda.factura.estado == 'pendente'"
+          variant="success"
+          v-b-modal.add
+        >
+          Efectuar pagamento &nbsp;
+          <span class="circle bg-white">
+            <i class="fa fa-arrow-right text-success" />
+          </span>
+        </b-button>
+      </b-button-toolbar>
+    </b-col>
       <b-row ref="conteudo" class="invoice-page">
         <b-col xs="12">
           <Widget>
@@ -54,15 +79,15 @@
                 <b-col sm="6" class="b-col-print-6">
                   <h5 class="text-muted no-margin">Informações da Empresa</h5>
                   <h3 class="company-name m-t-1">Careca Tubos</h3>
-                  <address>
-                    <strong>Av. Mocambique, Maputo</strong><br />
+                        <address>
+                    <strong>Av. Mocambique, Maputo. N 3519/11 </strong><br />
                     Bairro Nsalene<br />
-                    <strong>NUIT: </strong>1234456789<br />
-                    <abbr title="Work Fax">Telefone: </abbr> +258 84 00 00 000 <br />
-                    <abbr title="Work email">e-mail: </abbr>
+                    <strong>NUIT: </strong>111 216 517<br />
+                    <span title="Work Fax">Telefone: </span> +258 85 58 88 884 | 84 38 02 142 <br />
+                    <span>site: </span>www.carecatubos.co.mz<br />
+                    <span title="Work email">e-mail: </span>
                     <a href="mailto:#">carecatubos@gmail.com</a><br />
                   </address>
-                  
                 </b-col>
 
                 <b-col sm="6" class="b-col-print-6 text-right">
@@ -102,7 +127,7 @@
                       {{ produto.descricao }}
                     </td>
                     <td>
-  {{ produto.unidade === "pcs" ? Math.trunc(produto.venda_produtos.quantidade) : produto.venda_produtos.quantidade }}
+  {{ produto.unidade == "pcs" ? Math.trunc(produto.venda_produtos.quantidade) : produto.venda_produtos.quantidade }}
   {{ produto.unidade }}
 </td>
                     <td class="hidden-sm-down d-print-none">{{ produto.preco }}</td>
@@ -244,29 +269,7 @@
         </div>
       </b-form>
     </b-modal>
-    <b-col>
-      <b-button-toolbar class="mt-lg justify-content-end d-print-none">
-        <b-button
-          onClick="{this.printInvoice}"
-          variant="inverse"
-          class="mr-2"
-          @click="gerarPDF"
-        >
-          <i class="fa fa-print" />
-          &nbsp;&nbsp; Imprimir
-        </b-button>
-        <b-button
-          v-if="factura.venda.factura.estado == 'pendente'"
-          variant="success"
-          v-b-modal.add
-        >
-          Efectuar pagamento &nbsp;
-          <span class="circle bg-white">
-            <i class="fa fa-arrow-right text-success" />
-          </span>
-        </b-button>
-      </b-button-toolbar>
-    </b-col>
+   
   </b-row>
 </template>
 
@@ -336,11 +339,11 @@ formatarData(data) {
 
     gerarPDF() {
       const elemento = this.$refs.conteudo; // Referência ao elemento que será convertido
-
+const nomeArquivo = this.factura.venda.factura.codigoFactura + ".pdf";
       html2pdf()
         .set({
           margin: 10,
-          filename: "documento.pdf",
+          filename: nomeArquivo,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2 },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },

@@ -62,7 +62,7 @@
                     <i class="fa fa-edit mr-0 mb-xs" />
                     Editar</b-button
                   >
-                  <b-button size="xs" variant="danger">
+                  <b-button size="xs" variant="danger" @click="deleteData(produto)">
                     <i class="fa fa-trash mr-0 mb-xs" />
                     Apagar</b-button
                   >
@@ -321,6 +321,30 @@ export default {
         .get("/produtos", config)
         .then((result) => {
           this.produtos = result.data;
+        })
+        .catch((error) => {});
+    },
+
+    deleteData(produto) {
+      const selectedProduto = produto
+      let token = localStorage.getItem("token");
+      let config = {
+        headers: {
+          authorization: "Bearer " + token,
+        },
+      };
+
+      http
+        .delete(`/produtos/${selectedProduto.id}`, config)
+        .then((result) => {
+         this.$swal({
+            title: "Sucesso!",
+            text: "Operação realizada com sucesso!",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+          this.getData()
+
         })
         .catch((error) => {});
     },

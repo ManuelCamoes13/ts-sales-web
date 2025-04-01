@@ -77,7 +77,7 @@
           </b-form-group>
 
           <b-form-group label="Unidade" label-for="search-field" breakpoint="md">
-            <v-select id="search-select" v-model="unidade" :options="['pcs', 'metros']" />
+            <v-select id="search-select" v-model="unidade" :options="['pcs', 'm']" />
 
             <span class="text-danger" v-if="errors.has('simple')">
               {{ errors.first("simple") }}
@@ -126,7 +126,7 @@
           </b-form-group>
 
           <b-form-group label="Unidade" label-for="search-field" breakpoint="md">
-            <v-select id="search-select" v-model="unidade" :options="['metros', 'pcs']" />
+            <v-select id="search-select" v-model="unidade" :options="['m', 'pcs']" />
 
             <span class="text-danger" v-if="errors.has('simple')">
               {{ errors.first("simple") }}
@@ -160,7 +160,7 @@ export default {
   data() {
     return {
       nome: "",
-      unidade: "metros",
+      unidade: "m",
 
       categorias: [],
     };

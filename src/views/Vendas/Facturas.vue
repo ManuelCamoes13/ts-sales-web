@@ -61,7 +61,7 @@
             <tr v-for="(factura, index) in facturas" :key="index">
               <td>{{ factura.factura.codigoFactura }}</td>
               <td>{{ factura.cliente.nome }} </td>
-              <td>{{ factura.factura.data }}</td>
+              <td>{{ formatarData(factura.factura.data) }}</td>
               <td>
                 <b-badge :variant="factura.factura.estado === 'pendente' ? 'warning' : 'success'">
                   {{ factura.factura.estado }}
@@ -191,6 +191,17 @@ export default {
     this.getData();
   },
   methods: {
+formatarData(data) {
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date(data));
+    },
+
     getData() {
       let token = localStorage.getItem("token");
       let config = {

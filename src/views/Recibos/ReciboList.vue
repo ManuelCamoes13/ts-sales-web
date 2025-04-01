@@ -45,7 +45,7 @@
           <tbody>
             <tr v-for="(recibo, index) in recibos" :key="index">
               <td>{{ recibo.codigo }}</td>
-              <td>{{ recibo.createdAt }}</td>
+              <td>{{ formatarData(recibo.createdAt) }}</td>
               <td>{{ recibo.formaPagamento }}</td>
               <td>
   <span v-if="recibo.formaPagamento == 'numerario'">---</span>
@@ -175,6 +175,19 @@ export default {
     this.getCategorias();
   },
   methods: {
+
+    formatarData(data) {
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date(data));
+    },
+
+
     getData() {
       let token = localStorage.getItem("token");
       let config = {

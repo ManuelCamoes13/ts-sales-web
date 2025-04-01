@@ -40,7 +40,7 @@
               </b-col>
             </b-row>
             <b-form-group
-              label="Descricao do produto "
+              label="Discrição do produto "
               label-breakpoint="md"
               label-for="basic"
             >
@@ -61,7 +61,7 @@
               <b-col lg="6">
                 <b-form-group
                   horizontal
-                  label="Preco"
+                  label="Preço"
                   label-breakpoint="md"
                   label-for="number"
                 >
@@ -203,6 +203,7 @@ export default {
       };
       const data = {
         nome: this.nome,
+        unidade:this.selectedCategoria.unidade,
         categoria_id: this.selectedCategoria.id,
         descricao: this.descricao,
         notas: this.notas,
@@ -221,7 +222,14 @@ export default {
           });
           this.$router.push({ name: 'Produto-list' });
         })
-        .catch((error) => {});
+        .catch((error) => {
+         this.$swal({
+            title: "Erro!",
+            text: error.response.data,
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        });
     },
 
     getCategorias() {
