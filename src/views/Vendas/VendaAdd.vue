@@ -1,19 +1,34 @@
 <template>
   <div>
     <b-row>
-      <b-col lg="10">
-        <h1 class="page-title">Nova <span class="fw-semi-bold">Venda</span></h1>
+      <b-col lg="4">
+        <h1 class="page-title">Nova <span class="fw-semi-bold">{{ isFaturacao == 1 ? 'Facturação' : 'Cotação' }}</span></h1>
       </b-col>
-      <b-col lg="2">
-        <b-button variant="success" size="lg" class="" @click="verificar"
-          >Efectuar venda</b-button
+      <b-col lg="4">
+         <div class="mt-3">
+         {{isFaturacao}}
+    <label class="mr-2">
+      <input type="radio" value=1 v-model="isFaturacao" />
+      Faturação
+    </label>
+    <label>
+      <input type="radio" value=0 v-model="isFaturacao" />
+      Cotação
+    </label>
+
+    <!-- <p>Selecionado: {{ isFaturacao === 'true' ? 'Faturação' : 'Cotação' }}</p> -->
+  </div>        
+      </b-col>
+      <b-col lg="4">
+        <b-button variant="primary" size="lg" mb-2 class="" @click="verificar"
+          >Efectuar operação</b-button
         >
       </b-col>
     </b-row>
 
     <b-row>
       <b-col lg="12" xs="12">
-        <Widget title="Informacao do cliente">
+        <Widget>
           <b-row>
             <b-col lg="10">
               <b-form-group
@@ -76,7 +91,8 @@
                       variant="success"
                       size="xs"
                       @click="decreaseQuantity(produto)"
-                      >-</b-button>
+                      >-</b-button
+                    >
                     <input
                       v-model.number="produto.quantidade"
                       type="number"
@@ -89,7 +105,8 @@
                       variant="success"
                       size="xs"
                       @click="increaseQuantity(produto)"
-                      >+</b-button>
+                      >+</b-button
+                    >
                   </div>
                 </td>
                 <td>
@@ -368,6 +385,7 @@ export default {
 
   data() {
     return {
+    isFaturacao:1,
       selectedCliente: "",
       tipo: "singular",
       nome: "",
@@ -579,6 +597,7 @@ export default {
         cliente_id: this.selectedCliente?.id || this.clienteIdPadrao,
         imposto: parseFloat(this.imposto.toFixed(2)),
         desconto: parseFloat(this.desconto),
+        isFactura:parseInt(this.isFaturacao),
         produtos: this.produtosSelecionados.map((produto) => ({
           produto_id: produto.id,
           nome: produto.nome,
@@ -602,14 +621,19 @@ export default {
           icon: "success",
           confirmButtonText: "OK",
         });
-        this.$router.push({ name: "venda-factura" });
+        if(this.isFaturacao=="1"){
+ this.$router.push({ name: "venda-factura" });
+        }else{
+          this.$router.push({ name: "venda-cotacao" });
+        }
+       
       } catch (error) {
         let mensagemErro = "Erro ao efectuar operação";
 
-  // Verifica se o erro possui uma resposta do backend
-  if (error.response && error.response.data && error.response.data.message) {
-    mensagemErro = error.response.data.message; // Exibe a mensagem específica do backend
-  }
+        // Verifica se o erro possui uma resposta do backend
+        if (error.response && error.response.data && error.response.data.message) {
+          mensagemErro = error.response.data.message; // Exibe a mensagem específica do backend
+        }
 
         this.$swal({
           title: "Erro!",
@@ -617,7 +641,7 @@ export default {
           icon: "error",
           confirmButtonText: "OK",
         });
-        console.log(error)
+        console.log(error);
       }
     },
 

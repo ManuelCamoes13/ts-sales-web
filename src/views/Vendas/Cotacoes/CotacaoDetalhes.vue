@@ -1,45 +1,19 @@
 <template>
   <b-row>
     <b-col lg="11">
-    
-     <div class="text-muted fs-larger text-right mb-2">
-                    <strong>Estado da factura: </strong>
-                    <span>
-                      <b-badge
-                        :variant="
-                          factura.venda.factura.estado === 'pendente'
-                            ? 'warning'
-                            : 'success'
-                        "
-                      >
-                        {{ factura.venda.factura.estado }}
-                      </b-badge>
-                    </span>
-                  </div>
-                  <br>
-                   <b-col>
-      <b-button-toolbar class="mb-md justify-content-end d-print-none">
-        <b-button
-          onClick="{this.printInvoice}"
-          variant="inverse"
-          class="mr-2"
-          @click="gerarPDF"
-        >
-          <i class="fa fa-print" />
-          &nbsp;&nbsp; Imprimir
-        </b-button>
-        <b-button
-          v-if="factura.venda.factura.estado == 'pendente'"
-          variant="success"
-          v-b-modal.add
-        >
-          Efectuar pagamento &nbsp;
-          <span class="circle bg-white">
-            <i class="fa fa-arrow-right text-success" />
-          </span>
-        </b-button>
-      </b-button-toolbar>
-    </b-col>
+      <b-col>
+        <b-button-toolbar class="mb-md justify-content-end d-print-none">
+          <b-button
+            onClick="{this.printInvoice}"
+            variant="inverse"
+            class="mr-2"
+            @click="gerarPDF"
+          >
+            <i class="fa fa-print" />
+            &nbsp;&nbsp; Imprimir
+          </b-button>
+        </b-button-toolbar>
+      </b-col>
       <b-row ref="conteudo" class="invoice-page">
         <b-col xs="12">
           <Widget>
@@ -51,11 +25,10 @@
                 <b-col md="6" xs="12" class="b-col-print-6">
                   <h4 class="text-right">
                     #<span class="fw-semi-bold">
-                   
-                      {{ factura.venda.factura.codigoFactura }}</span
+                      {{ factura.venda.cotacao.codigoCotacao }}</span
                     >
                     /
-                    <small>{{formatarData(factura.venda.factura.data) }}</small>
+                    <small>{{ formatarData(factura.venda.cotacao.data) }}</small>
                   </h4>
                   <!-- <div class="text-muted fs-larger text-right">
                     <strong>Estado: </strong>
@@ -79,11 +52,12 @@
                 <b-col sm="6" class="b-col-print-6">
                   <h5 class="text-muted no-margin">Informações da Empresa</h5>
                   <h3 class="company-name m-t-1">Careca Tubos</h3>
-                        <address>
+                  <address>
                     <strong>Av. Mocambique, Maputo. N 3519/11 </strong><br />
                     Bairro Nsalene<br />
                     <strong>NUIT: </strong>111 216 517<br />
-                    <span title="Work Fax">Telefone: </span> +258 85 58 88 884 | 84 38 02 142 <br />
+                    <span title="Work Fax">Telefone: </span> +258 85 58 88 884 | 84 38 02
+                    142 <br />
                     <span>site: </span>www.carecatubos.co.mz<br />
                     <span title="Work email">e-mail: </span>
                     <a href="mailto:#">carecatubos@gmail.com</a><br />
@@ -108,7 +82,7 @@
                 </b-col>
               </b-row>
 
-              <table v-if="produtos.length!=0" class="table table-striped">
+              <table v-if="produtos.length != 0" class="table table-striped">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -127,16 +101,22 @@
                       {{ produto.descricao }}
                     </td>
                     <td>
-  {{ produto.unidade == "pcs" ? Math.trunc(produto.venda_produtos.quantidade) : produto.venda_produtos.quantidade }}
-  {{ produto.unidade }}
-</td>
+                      {{
+                        produto.unidade == "pcs"
+                          ? Math.trunc(produto.venda_produtos.quantidade)
+                          : produto.venda_produtos.quantidade
+                      }}
+                      {{ produto.unidade }}
+                    </td>
                     <td class="hidden-sm-down d-print-none">{{ produto.preco }}</td>
-                    <td>{{ (produto.preco * produto.venda_produtos.quantidade).toFixed(2) }}</td>
+                    <td>
+                      {{ (produto.preco * produto.venda_produtos.quantidade).toFixed(2) }}
+                    </td>
                   </tr>
                 </tbody>
               </table>
 
-              <table  v-if="maoDeObras.length!=0" class="table table-striped">
+              <table v-if="maoDeObras.length != 0" class="table table-striped">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -159,8 +139,12 @@
                       {{ maoDeObra.venda_mao_de_obras.preco }}
                     </td>
                     <td>
-                      {{ (maoDeObra.venda_mao_de_obras.preco * maoDeObra.venda_mao_de_obras.quantidade).toFixed(2) }}
-
+                      {{
+                        (
+                          maoDeObra.venda_mao_de_obras.preco *
+                          maoDeObra.venda_mao_de_obras.quantidade
+                        ).toFixed(2)
+                      }}
                     </td>
                   </tr>
                 </tbody>
@@ -177,24 +161,26 @@
                     <b-col xs="4"></b-col>
                     <b-col sm="4">
                       <p>Subtotal</p>
-                      <p>IVA(16%)</p> 
-                      <p v-if="factura.venda.desconto!=0">Desconto</p>
+                      <p>IVA(16%)</p>
+                      <p v-if="factura.venda.desconto != 0">Desconto</p>
                       <p class="no-margin"><strong>Total</strong></p>
                     </b-col>
                     <b-col sm="4">
-                      <p>{{ (subtotal).toFixed(2) }}MT</p>
-                      <p>{{ (iva).toFixed(2) }}MT</p>
-                      <p v-if="factura.venda.desconto!=0">{{factura.venda.desconto}}</p>
+                      <p>{{ subtotal.toFixed(2) }}MT</p>
+                      <p>{{ iva.toFixed(2) }}MT</p>
+                      <p v-if="factura.venda.desconto != 0">
+                        {{ factura.venda.desconto }}
+                      </p>
                       <p class="no-margin">
-                        <strong>{{ (total).toFixed(2) }}MT</strong>
+                        <strong>{{ total.toFixed(2) }}MT</strong>
                       </p>
                     </b-col>
                   </b-row>
                 </b-col>
               </b-row>
-             <h6 class="fw-semi-bold no-margin">Formas de pagamento</h6>
-                  <strong>Conta Millenium: </strong>548839387<br />
-                  <strong>NIB: </strong>0001 0000 0054 8839 38757<br />
+              <h6 class="fw-semi-bold no-margin">Formas de pagamento</h6>
+              <strong>Conta Millenium: </strong>548839387<br />
+              <strong>NIB: </strong>0001 0000 0054 8839 38757<br />
             </section>
           </Widget>
         </b-col>
@@ -267,7 +253,6 @@
         </div>
       </b-form>
     </b-modal>
-   
   </b-row>
 </template>
 
@@ -322,22 +307,20 @@ export default {
     this.getData();
   },
   methods: {
-
-formatarData(data) {
-      return new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
+    formatarData(data) {
+      return new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
       }).format(new Date(data));
     },
 
-
     gerarPDF() {
       const elemento = this.$refs.conteudo; // Referência ao elemento que será convertido
-const nomeArquivo = this.factura.venda.factura.codigoFactura + ".pdf";
+      const nomeArquivo = this.factura.venda.factura.codigoFactura + ".pdf";
       html2pdf()
         .set({
           margin: 10,

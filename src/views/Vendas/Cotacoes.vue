@@ -1,6 +1,6 @@
 <template>
   <b-row>
-    <h1 class="page-title">Lista de <span class="fw-semi-bold">facturas</span></h1>
+    <h1 class="page-title">Lista de <span class="fw-semi-bold">Cotações</span></h1>
     <b-col lg="12">
       <Widget customHeader>
         <!-- <b-button class="mr-sm" variant="primary" v-b-modal.demo>Demo</b-button> -->
@@ -53,42 +53,37 @@
               <th>Codigo</th>
               <th>Cliente</th>
               <th>Emitido em</th>
-              <th>Estado</th>
               <th>Ações</th>
             </tr>
           </thead>
-         <tbody>
-  <tr v-for="(factura, index) in facturas" :key="index">
-    <td v-if="factura.factura !== null">{{ factura.factura.codigoFactura }}</td>
-    <td v-if="factura.factura !== null">{{ factura.cliente.nome }} </td>
-    <td v-if="factura.factura !== null">{{ formatarData(factura.factura.data) }}</td>
-    <td v-if="factura.factura !== null">
-      <b-badge :variant="factura.factura.estado === 'pendente' ? 'warning' : 'success'">
-        {{ factura.factura.estado }}
-      </b-badge>
-    </td>
-    <td v-if="factura.factura !== null">
-      <b-button-group class="mb-3">
-        <b-button
-          size="xs"
-          variant="primary"
-          :to="{
-            name: 'factura-detalhes',
-            params: { facturaId: factura.id },
-          }"
-        >
-          <i class="fa fa-eye mr-0 mb-xs" />
-          Ver
-        </b-button>
-        <b-button size="xs" variant="danger">
-          <i class="fa fa-trash mr-0 mb-xs" />
-          Apagar
-        </b-button>
-      </b-button-group>
-    </td>
-  </tr>
-</tbody>
+          
+          <tbody>
+            <tr v-for="(factura, index) in facturas" :key="index">
+             <td v-if="factura.cotacao !== null">{{ factura.cotacao.codigoCotacao }}</td>
+            <td v-if="factura.cotacao !== null">{{ factura.cliente.nome }}</td>
+                 <td v-if="factura.cotacao !== null">{{ formatarData(factura.cotacao.data) }}</td>
 
+              <td v-if="factura.cotacao !== null">
+                <b-button-group class="mb-3">
+                  <b-button
+                    size="xs"
+                    variant="primary"
+                    :to="{
+                      name: 'cotacao-detalhes',
+                      params: { facturaId: factura.id },
+                    }"
+                  >
+                    <i class="fa fa-eye mr-0 mb-xs" />
+                    Ver
+                  </b-button>
+                  <b-button size="xs" variant="danger">
+                    <i class="fa fa-trash mr-0 mb-xs" />
+                    Apagar
+                  </b-button>
+                </b-button-group>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </Widget>
       <b-modal
@@ -182,9 +177,9 @@ export default {
   components: { vSelect },
   data() {
     return {
-      nome: "",      
+      nome: "",
+      facturas: [],
       categorias: [],
-      facturas: "",
     };
   },
 
@@ -192,18 +187,18 @@ export default {
     this.getData();
   },
   methods: {
-formatarData(data) {
-      return new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
+    formatarData(data) {
+      return new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
       }).format(new Date(data));
     },
 
-    getData() {
+    async getData() {
       let token = localStorage.getItem("token");
       let config = {
         headers: {
@@ -214,7 +209,7 @@ formatarData(data) {
       http
         .get("/venda", config)
         .then((response) => {
-         this.facturas = response.data.vendas.reverse()
+          this.facturas = response.data.vendas.reverse()
         })
         .catch((error) => {});
     },

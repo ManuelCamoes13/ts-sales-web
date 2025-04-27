@@ -109,12 +109,15 @@ import Configuracoes from '@/views/Configuracoes/Configuracoes.vue'
 import VendaAdd from '@/views/Vendas/VendaAdd.vue'
 
 import Facturas from '@/views/Vendas/Facturas.vue'
+import Cotacoes from '@/views/Vendas/Cotacoes.vue'
 
 import FacturasDetalhes from '@/views/Vendas/Facturas/FacturasDetalhes.vue'
 
 import ReciboList from '@/views/Recibos/ReciboList.vue'
 import ReciboAdd from '@/views/Recibos/ReciboAdd.vue'
 import ReciboDetalhes from '@/views/Recibos/ReciboDetalhes.vue'
+
+import CotacaoDetalhes from '@/views/Vendas/Cotacoes/CotacaoDetalhes.vue'
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -317,11 +320,20 @@ export default new Router({
           name: 'venda-factura',
           component: Facturas,
         },
-
+        {
+          path: 'venda/cotacao',
+          name: 'venda-cotacao',
+          component: Cotacoes,
+        },
         {
           path: 'venda/factura/:facturaId',
           name: 'factura-detalhes',
           component: FacturasDetalhes,
+        },
+        {
+          path: 'venda/cotacao/:facturaId',
+          name: 'cotacao-detalhes',
+          component: CotacaoDetalhes,
         },
         
         {

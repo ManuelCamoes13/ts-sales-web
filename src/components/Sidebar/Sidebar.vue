@@ -69,8 +69,9 @@
           iconName="flaticon-core"
           index="venda"
           :childrenLinks="[
-            { header: 'Nova venda', link: '/app/venda/add' },
+            { header: 'Nova entrada', link: '/app/venda/add' },
             { header: 'Facturas', link: '/app/venda/factura' },
+            { header: 'Cotações', link: '/app/venda/Cotacao' },
           ]"
         />
         <NavLink
